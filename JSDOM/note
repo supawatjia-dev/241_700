@@ -1,0 +1,53 @@
+    // กำหนด selection และกำหนดค่า value
+    ชื่อ: <input
+    id="fname" 
+    class="input"
+    type="text" 
+    name="fname" 
+    value="ชื่อทดสอบ">
+
+    นามสกุล: <input 
+    id="lname"
+    class="input"
+    type="text"
+    name="lname"
+    value="นามสกุลทดสอบ">
+
+    เบอร์มือถือ: <input 
+     id="phone"
+    class="input"
+    type="text"
+    name="phone"
+    value="0123456789">
+
+    งานอดิเรก
+    <input type="checkbox" name="fanme" value="ฟุตบอล"> ฟุตบอล
+    <input type="checkbox" name="fanme" value="บาสเก็ตบอล"> บาสเก็ตบอล
+    <input type="checkbox" name="fanme" value="ว่ายน้ำ"> ว่ายน้ำ
+ 
+
+    // แสดงผลของ input และค่า value
+    let inputs = document.querySelector('#fname');
+    console.log(inputs.value)
+    /*console.log(inputs);
+    for (let i = 0; i , inputs.length; i++){
+    console.log(inputs[i].value)
+    }*/
+
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    console.log(checkboxes);
+    for(let i = 0; i<checkboxes.length; i++){
+        console.log(checkboxes[i].value);
+    }
+
+    <button onclick="userClick()">Click Me</button>
+    <div onclick="divclick()">Click Div</div>
+    <script>
+        function userClick(){
+            console.log('Button was clicks!');
+        }
+        function divclick(){
+            console.log('Div was clicks!');
+        }
+
+    
