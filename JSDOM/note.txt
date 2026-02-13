@@ -50,4 +50,16 @@
             console.log('Div was clicks!');
         }
 
+
+
+        
+app.get('/test', (req, res)=>{
+let user = {
+    name: "Jonh Doe",
+    age: 30,
+    email: "Jonh.doe@gmail.com"
+}
+res.json(user);
+});
+
     
