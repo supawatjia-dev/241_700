@@ -1,77 +1,91 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const { use } = require('react');
-
+const { use, memo } = require('react');
+const mysql = require('mysql2/promise')
 app.use(bodyParser.json())
 
+
+
 const port = 8000;
-
-let users = [];
-let counter = 1;
-/**
-Get /users - ดึงข้อมูลผุ้ใช้ทั้้งหมด
-POST /users - เพื่มผู้ใช้ใหม่
-GET /users/:id - ดึงข้อมูลผุ้ใช้งาน
-PUT /users/:id - เเก้ไขข้อมูลใช่ตาม ID
-DELETE /users/:id - ลบผุ้ใช้ตาม ID ที่บันทึก
- */
-
-app.get('/users', (req, res)=>{
-    res.json(users);
-});
-
-app.post('/user', (req, res)=>{
-    let user = req.body;
-    user.id = counter
-    counter +=1;
-    users.push(user);
-    res.json({
-    message: 'User added successfully',
-    user: user
-    });
-});
-
-app.patch('/user/:id', (req, res)=>{
-    let id =  req.params.id;
-    let updateUser = req.body;
-
-    // หา user ที่จาก id ที่ส่งมา
-    let selectindex = users.findIndex(user => user.id == id);
-    
-    //update ข้อมูล user
-    if(updateUser.firstname){
-        users[selectindex].firstname = updateUser.firstname;
-    }
-    if(updateUser.lastname){
-        users[selectindex].lastname = updateUser.lastname;
-    }
-
-    res.json({
-        message: 'User update successfully!',
-        data:{
-            user: updateUser,
-            indexUpdate: selectindex
-        }
+const initMySQL = async () => {
+    conn = await mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'root',
+        database: 'webdb',
+        port: 8700
     })
-    //ส่งตัว users ที่ update แล้วกลับไป
+    console.log('Connected to MySQL database');
+}
+
+app.get('/users', async (req, res) => {
+    const results = await conn.query('SELECT * FROM users');
+    res.json(results[0]);
 });
 
-app.delete('/users/:id', (req, res)=>{
-    let id = req.params.id;
-
-    // หา index จาก id ที่ต้องการลบ
-    let selectIndex = users.findIndex(user => user.id == id);
-
-    users.splice(selectIndex, 1)
-    //ลบ user ออกจาก users
-    res.json({
-        message: 'User deleted successfully!',
-        indexDelete: selectIndex
-    });
+app.post('/users', async (req, res) => {
+    try {
+        let user = req.body;
+        const results = await conn.query('INSERT INTO users SET ?', user);
+        res.json({
+            message: 'User added successfully',
+            data: results[0]
+        })
+    } catch (error) {
+        console.error('Error inserting user', error);
+        res.status(500).json({ message: 'Error adding user' });
+    }
 });
 
- app.listen(port, ()=>{
-console.log(`Sever is running on http://localhost:${port}`)
+app.get('/users/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        const results = await conn.query('SELECT * FROM users WHERE id = ?', id);
+        if (results[0].length === 0) {
+            return res.status(404).json({ message: 'User not found' })
+        }
+        res.json(results[0][0]);
+    } catch (error) {
+        console.error('Error fetching user:'.error);
+        let statussCode = error.statussCode || 500;
+        res.status(statussCode).json({
+            message: error.message || 'Error fetching user'
+        })
+    }
+});
+
+app.put('/users/:id',async(req, res)=>{
+    try {
+        let id = req.params.id;
+        let updateUser = req.body;
+        const results = await conn.query('UPDATE users SET ? WHERE id = ?', [updateUser, id])
+        res.json({
+            message: 'User deleted successfully',
+            data: results[0]
+            });
+    } catch (error) {
+        console.error('Error updated user:', error)
+        res.status(500).json({ message: 'Error updated user' });
+    }
+})
+
+app.delete('/users/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        const results = await conn('DELETE FROM users WHERE id=?', id)
+        res.json({
+            message: 'User deleted successfully',
+            data: results[0]
+        })
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Error deleting user' });
+    }
+});
+
+app.listen(port, async () => {
+    await initMySQL();
+    console.log(`Sever is running on http://localhost:${port}`)
 });
 
