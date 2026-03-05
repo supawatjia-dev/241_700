@@ -73,7 +73,7 @@ app.put('/users/:id',async(req, res)=>{
 app.delete('/users/:id', async (req, res) => {
     try {
         let id = req.params.id;
-        const results = await conn('DELETE FROM users WHERE id=?', id)
+        const results = await conn.query('DELETE FROM users WHERE id=?', id)
         res.json({
             message: 'User deleted successfully',
             data: results[0]
