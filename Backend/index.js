@@ -3,6 +3,9 @@ const app = express();
 const bodyParser = require('body-parser');
 const { use, memo } = require('react');
 const mysql = require('mysql2/promise')
+const cors = require('cors');
+
+app.use(cors());
 app.use(bodyParser.json())
 
 
@@ -73,7 +76,7 @@ app.put('/users/:id',async(req, res)=>{
 app.delete('/users/:id', async (req, res) => {
     try {
         let id = req.params.id;
-        const results = await conn('DELETE FROM users WHERE id=?', id)
+        const results = await conn.query('DELETE FROM users WHERE id=?', id)
         res.json({
             message: 'User deleted successfully',
             data: results[0]
@@ -88,4 +91,3 @@ app.listen(port, async () => {
     await initMySQL();
     console.log(`Sever is running on http://localhost:${port}`)
 });
-

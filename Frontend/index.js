@@ -1,9 +1,9 @@
-function submitData () {
+const submitData = async () => {
     let firstNameDOM = document.querySelector('input[name=firstname]');
     let lastNameDOM = document.querySelector('input[name=lastname]');
     let ageDOM = document.querySelector('input[name=age]');
     let genderDOM = document.querySelector('input[name=gender]:checked');
-    let interestDOMs = document.querySelectorAll('input[name=interest]:checked');
+    let interestDOMs = document.querySelectorAll('input[name=interests]:checked');
     let descriptionDOM = document.querySelector('textarea[name=description]');
 
     let interest = ''
@@ -16,12 +16,14 @@ function submitData () {
 
 
     let userData ={
-        firstName: firstNameDOM.value,
-        lastName: lastNameDOM.value,
+        firstname: firstNameDOM.value,
+        lastname: lastNameDOM.value,
         age: ageDOM.value,
         gender: genderDOM.value,
         description: descriptionDOM.value,
-        interest: interest
+        interests: interest
     }
      console.log('submitData', userData);
+     const response = await axios.post('http://localhost:8000/users',userData);
+     console.log('response',response)
 }
