@@ -107,3 +107,21 @@ input[type="radio"], input[type="checkbox"] {
 .button:active {
     transform: scale(0.98);
 }
+
+.message{
+    background-color: purple;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    display: none;
+}
+
+.message.success{
+    background-color: lightgreen;
+    display: block;
+}
+
+.message.danger{
+    background-color: lightcoral;
+    display: block;
+}
