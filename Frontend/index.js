@@ -7,18 +7,18 @@ const validateDate = (userData) => {
         errors.push('กรุณากรอกนามสกุล')
     }
     if (!userData.age){
-        errors.push('กรุณากรอกอายุ')
+       errors.push('กรุณากรอกอายุ')
     }
     if (!userData.gender){
         errors.push('กรุณาเลือกเพศ')
     }
     if (!userData.interests){
-        errors.push('กรุณาเลือกงานอดิเรก')
-    }
+       errors.push('กรุณาเลือกงานอดิเรก')
+   }
     if (!userData.description){
         errors.push('กรุณากรอกคำอธิยาย')
     }
-    return errors;
+   return errors;
 }
 const submitData = async () => {
     let firstNameDOM = document.querySelector('input[name=firstname]');
@@ -64,9 +64,13 @@ const submitData = async () => {
     } catch (error) {
         console.log('error message', error.message);
         console.log('error detail',error.errors);
-        //if (error.response) {
-        //    console.log('Error response:', error.response.data.message)
-        //}
+
+        if (error.response) {
+            console.log('Error response:', error.response.data.message)
+            error.message = error.response.data.message;
+            error.errors = error.response.data.error;
+        }
+        
         let htmlData = '<div>'
         htmlData += `<div>${error.message}</div>`;
         htmlData += '<ul>'

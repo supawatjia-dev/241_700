@@ -27,17 +27,52 @@ app.get('/users', async (req, res) => {
     res.json(results[0]);
 });
 
+const validateDate = (userData) => {
+    let errors = [];
+    if (!userData.firstname){
+        errors.push('กรุณากรอกชื่อ')
+    }
+    if (!userData.lastname){
+        errors.push('กรุณากรอกนามสกุล')
+    }
+    if (!userData.age){
+        errors.push('กรุณากรอกอายุ')
+    }
+    if (!userData.gender){
+        errors.push('กรุณาเลือกเพศ')
+    }
+    if (!userData.interests){
+        errors.push('กรุณาเลือกงานอดิเรก')
+    }
+    if (!userData.description){
+        errors.push('กรุณากรอกคำอธิยาย')
+    }
+    return errors;
+}
+
 app.post('/users', async (req, res) => {
     try {
         let user = req.body;
-        const results = await conn.query('INSERT INTO users SET ?', user);
+        const errors = validateDate(user);
+        if (errors.length > 0 ){
+            throw{
+                message : 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                errors : errors
+            }
+        }
+        const results = await conn.query('INSERT INTO users SET ?',user); 
         res.json({
             message: 'User added successfully',
             data: results[0]
         })
     } catch (error) {
+        const errorMessage = error.message || 'Error adding user';
+        const errors = error.error || {};
         console.error('Error inserting user', error);
-        res.status(500).json({ message: 'Error adding user' });
+        res.status(500).json({ 
+            message:errorMessage,
+            errors: errors
+        });
     }
 });
 
